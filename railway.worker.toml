@@ -1,0 +1,6 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python -m worker.runner"
+restartPolicyType = "on_failure"
