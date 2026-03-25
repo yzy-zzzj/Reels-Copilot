@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
     app.state.redis.close()
 
 
-app = FastAPI(title="Instagram Reel Fact-Checker", lifespan=lifespan)
+app = FastAPI(title="Reels Copilot", lifespan=lifespan)
 app.include_router(webhook_router)
 
 
