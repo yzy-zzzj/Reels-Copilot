@@ -30,7 +30,10 @@ def extract_reel_url(event: MessagingEvent) -> str | None:
     # Check attachments (user shared/forwarded a Reel)
     if msg.attachments:
         for att in msg.attachments:
-            if att.type in ("ig_reel", "video", "share") and att.payload and att.payload.url:
+            if att.type == "ig_reel" and att.payload and att.payload.url:
+                # Accept CDN URLs (lookaside.fbsbx.com) — resolved to permalink in worker
+                return att.payload.url
+            if att.type in ("video", "share") and att.payload and att.payload.url:
                 if _REEL_PATTERN.search(att.payload.url):
                     return att.payload.url
 
