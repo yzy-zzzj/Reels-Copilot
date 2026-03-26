@@ -62,6 +62,14 @@ async def receive_event(request: Request) -> dict:
 def _handle_messaging_event(event, redis) -> None:
     sender_id = event.sender.id
 
+    if event.message:
+        logger.info(
+            "Incoming message — text=%r attachments=%r",
+            event.message.text,
+            [{"type": a.type, "payload": a.payload.model_dump() if a.payload else None}
+             for a in (event.message.attachments or [])],
+        )
+
     reel_url = extract_reel_url(event)
     if not reel_url:
         logger.debug("No Reel URL from %s — ignoring", sender_id)
