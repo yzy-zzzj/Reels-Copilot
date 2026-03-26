@@ -8,7 +8,7 @@ import logging
 
 import httpx
 
-from app.config import INSTAGRAM_PAGE_ACCESS_TOKEN, GRAPH_API_URL
+from app.config import INSTAGRAM_PAGE_ACCESS_TOKEN, INSTAGRAM_PAGE_ID, GRAPH_API_URL
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def _split(text: str) -> list[str]:
 
 
 def _post(recipient_id: str, text: str) -> None:
-    url = f"{GRAPH_API_URL}/me/messages"
+    url = f"{GRAPH_API_URL}/{INSTAGRAM_PAGE_ID}/messages"
     payload = {
         "recipient": {"id": recipient_id},
         "message": {"text": text},
