@@ -7,35 +7,6 @@ from __future__ import annotations
 import os
 import subprocess
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
-
-import httpx
-
-from app.config import GRAPH_API_URL, INSTAGRAM_PAGE_ACCESS_TOKEN
-
-
-def _resolve_cdn_url(url: str) -> str:
-    """
-    If `url` is a Meta CDN URL (lookaside.fbsbx.com), resolve it to the
-    Instagram reel permalink via the Graph API. Otherwise return as-is.
-    """
-    if "lookaside.fbsbx.com" not in url:
-        return url
-
-    qs = parse_qs(urlparse(url).query)
-    asset_ids = qs.get("asset_id", [])
-    if not asset_ids:
-        return url
-
-    asset_id = asset_ids[0]
-    resp = httpx.get(
-        f"{GRAPH_API_URL}/{asset_id}",
-        params={"fields": "permalink_url", "access_token": INSTAGRAM_PAGE_ACCESS_TOKEN},
-        timeout=10,
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    return data.get("permalink_url", url)
 
 
 def download_audio(url: str, out_dir: str) -> str:
@@ -59,7 +30,6 @@ def download_audio(url: str, out_dir: str) -> str:
             f.write(cookies_txt)
         cmd += ["--cookies", cookies_path]
 
-    url = _resolve_cdn_url(url)
     cmd.append(url)
     subprocess.run(cmd, check=True, capture_output=True)
 
